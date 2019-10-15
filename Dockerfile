@@ -13,4 +13,5 @@ RUN apt-get update && \
 RUN apt-get -y install python3-pip &&\
     pip3 install awscli
 RUN apt-get -y install git-crypt
+RUN curl -L https://git.io/get_helm.sh | bash
 USER circleci
