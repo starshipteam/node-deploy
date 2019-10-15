@@ -1,0 +1,28 @@
+version: 2.1
+jobs:
+  docker-image:
+    working_directory: ~/project
+    docker:
+      - image: circleci/buildpack-deps:stable
+ 
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: build docker-image
+          command: docker build -t starshipteam/node-deploy .
+      - run:
+          name: push docker-image
+          command: |
+            docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+            docker tag starshipteam/node-deploy starshipteam/node-deploy:$(cat version)
+            docker push starshipteam/node-deploy:$(cat version)
+            docker push starshipteam/node-deploy
+workflows:
+  build_and_push:
+    jobs:
+      - docker-image:
+          filters:
+            branches:
+              only:
+                - master
