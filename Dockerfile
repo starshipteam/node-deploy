@@ -14,4 +14,7 @@ RUN apt-get -y install python3-pip &&\
     pip3 install awscli
 RUN apt-get -y install git-crypt
 RUN curl -L https://git.io/get_helm.sh | bash
+RUN mkdir -p /home/circleci/.local/bin/ && \
+    curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeval && \
+    chmod a+x /home/circleci/.local/bin/kubeval  
 USER circleci
