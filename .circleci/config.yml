@@ -1,6 +1,23 @@
 version: 2.1
+commands:
+  push-image:
+    description: "push docker-image to registry"
+    parameters:
+      image-name:
+        type: string
+      image-url:
+        type: string
+    steps:
+      - run:
+          name: push << parameters.image-url >>
+          command: |
+            docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+            docker tag << parameters.image-url >> << parameters.image-url >>:$(cat ./<< parameters.image-name >>/version)
+            docker push << parameters.image-url >>:$(cat version)
+            docker push << parameters.image-url >>
+
 jobs:
-  docker-image:
+  node-deploy-image:
     working_directory: ~/project
     docker:
       - image: circleci/buildpack-deps:stable
@@ -11,18 +28,37 @@ jobs:
       - run:
           name: build docker-image
           command: docker build -t starshipteam/node-deploy .
+      - push-image:
+          image-name: node-deploy
+          image-url: starshipteam/node-deploy
+
+  golang-deploy-image:
+    working_directory: ~/project
+    docker:
+      - image: circleci/buildpack-deps:stable
+ 
+    steps:
+      - checkout
+      - setup_remote_docker
       - run:
-          name: push docker-image
-          command: |
-            docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
-            docker tag starshipteam/node-deploy starshipteam/node-deploy:$(cat version)
-            docker push starshipteam/node-deploy:$(cat version)
-            docker push starshipteam/node-deploy
+          name: build docker-image
+          command: docker build -t starshipteam/node-deploy .
+      - push-image:
+          image-name: node-deploy
+          image-url: starshipteam/node-deploy
+
 workflows:
   build_and_push:
     jobs:
-      - docker-image:
+      - node-deploy-image:
           filters:
             branches:
               only:
                 - master
+      - golang-deploy-image:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - node-deploy-image
