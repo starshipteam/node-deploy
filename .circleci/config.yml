@@ -13,7 +13,7 @@ commands:
           command: |
             docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
             docker tag << parameters.image-url >> << parameters.image-url >>:$(cat ./<< parameters.image-name >>/version)
-            docker push << parameters.image-url >>:$(cat version)
+            docker push << parameters.image-url >>:$(cat ./<< parameters.image-name >>/version)
             docker push << parameters.image-url >>
 
 jobs:
