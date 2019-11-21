@@ -27,7 +27,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: build docker-image
-          command: docker build -t starshipteam/node-deploy .
+          command: docker build -t starshipteam/node-deploy ./node-deploy
       - push-image:
           image-name: node-deploy
           image-url: starshipteam/node-deploy
@@ -42,10 +42,10 @@ jobs:
       - setup_remote_docker
       - run:
           name: build docker-image
-          command: docker build -t starshipteam/node-deploy .
+          command: docker build -t starshipteam/golang-deploy ./golang-deploy
       - push-image:
-          image-name: node-deploy
-          image-url: starshipteam/node-deploy
+          image-name: golang-deploy
+          image-url: starshipteam/golang-deploy
 
 workflows:
   build_and_push:
