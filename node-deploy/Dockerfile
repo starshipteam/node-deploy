@@ -1,4 +1,4 @@
-FROM circleci/node:10.16
+FROM circleci/node:12.14
 # Install required system packages and dependencies
 USER root
 RUN mkdir -p /home/circleci/.local/bin/ && \
