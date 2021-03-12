@@ -1,8 +1,4 @@
 FROM circleci/node:12.16
-
-# bash preparation
-RUN echo "alias skipIfDockerImageTagExists='./scripts/skipIfDockerImageTagExists.sh'" >> /home/circleci/.bashrc
-
 # Install required system packages and dependencies
 USER root
 RUN mkdir -p /home/circleci/.local/bin/ && \
