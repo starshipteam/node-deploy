@@ -11,6 +11,7 @@ RUN wget -q -O /home/circleci/.local/bin/runIfChanged https://github.com/sgeisba
 RUN apt-get update && \
     apt-get -y install openssh-client make
 RUN apt-get -y install python3-pip &&\
+    apt-get -y install groff &&\
     pip3 install awscli
 RUN apt-get -y install git-crypt
 RUN curl -L https://git.io/get_helm.sh | bash
