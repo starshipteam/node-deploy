@@ -1,7 +1,7 @@
 version: 2.1
 commands:
   push-image:
-    description: "push docker-image to registry"
+    description: 'push docker-image to registry'
     parameters:
       image-name:
         type: string
@@ -21,7 +21,7 @@ jobs:
     working_directory: ~/project
     docker:
       - image: circleci/buildpack-deps:stable
- 
+
     steps:
       - checkout
       - setup_remote_docker
@@ -36,7 +36,7 @@ jobs:
     working_directory: ~/project
     docker:
       - image: circleci/buildpack-deps:stable
- 
+
     steps:
       - checkout
       - setup_remote_docker
@@ -54,6 +54,7 @@ workflows:
           filters:
             branches:
               only:
+                - /^feature\/.*/
                 - master
       - golang-deploy-image:
           filters:
