@@ -54,7 +54,6 @@ workflows:
           filters:
             branches:
               only:
-                - /^feature\/.*/
                 - master
       - golang-deploy-image:
           filters:
