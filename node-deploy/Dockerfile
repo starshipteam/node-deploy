@@ -18,4 +18,5 @@ RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-he
 RUN mkdir -p /home/circleci/.local/bin/ && \
     curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeval && \
     chmod a+x /home/circleci/.local/bin/kubeval  
+RUN npm install -g zx
 USER circleci
