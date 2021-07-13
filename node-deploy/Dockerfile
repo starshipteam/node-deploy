@@ -4,7 +4,7 @@ USER root
 RUN mkdir -p /home/circleci/.local/bin/ && \
     wget -q -O /home/circleci/.local/bin/aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.4.0/aws-iam-authenticator_0.4.0_linux_amd64 && \
     chmod a+x /home/circleci/.local/bin/aws-iam-authenticator
-RUN wget -q -O /home/circleci/.local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl && \
+RUN wget -q -O /home/circleci/.local/bin/kubectl https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl && \
     chmod +x /home/circleci/.local/bin/kubectl
 RUN wget -q -O /home/circleci/.local/bin/runIfChanged https://github.com/sgeisbacher/runIfChanged/releases/download/v0.10.1/runIfChanged.linux-amd64 && \
     chmod +x /home/circleci/.local/bin/runIfChanged
