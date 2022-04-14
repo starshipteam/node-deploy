@@ -17,6 +17,18 @@ commands:
             docker push << parameters.image-url >>
 
 jobs:
+  node-build-image:
+    working_directory: ~/project
+    docker:
+      - image: circleci/buildpack-deps:stable
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: build docker-image
+          command: docker build -t starshipteam/node-deploy-test ./node-deploy
+
   node-deploy-image:
     working_directory: ~/project
     docker:
@@ -31,6 +43,18 @@ jobs:
       - push-image:
           image-name: node-deploy
           image-url: starshipteam/node-deploy
+
+  golang-build-image:
+    working_directory: ~/project
+    docker:
+      - image: circleci/buildpack-deps:stable
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: build docker-image
+          command: docker build -t starshipteam/golang-deploy-test ./golang-deploy
 
   golang-deploy-image:
     working_directory: ~/project
@@ -48,6 +72,20 @@ jobs:
           image-url: starshipteam/golang-deploy
 
 workflows:
+  build:
+    jobs:
+      - node-build-image:
+          filters:
+            branches:
+              only:
+                - /^feature\/.*/
+                - /^hotfix\/.*/
+      - golang-build-image:
+          filters:
+            branches:
+              only:
+                - /^feature\/.*/
+                - /^hotfix\/.*/
   build_and_push:
     jobs:
       - node-deploy-image:
