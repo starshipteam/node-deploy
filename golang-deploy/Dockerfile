@@ -1,4 +1,4 @@
-FROM circleci/golang:1.13
+FROM circleci/golang:1.18
 ARG DOCKERIZE_VERSION="v0.6.1"
 
 USER root
