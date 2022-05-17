@@ -92,9 +92,9 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - develop
       - golang-deploy-image:
           filters:
             branches:
               only:
-                - master
+                - develop
