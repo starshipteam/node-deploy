@@ -23,12 +23,12 @@ RUN wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/d
     chmod a+x /usr/local/bin/yq
 ## Patching outdated kubeval Helm plugin on the fly
 ENV HELM_KUBEVAL_VER=v0.16.1
-RUN mkdir -p /tmp/helm-kubeval /home/circleci/.local/share/helm/plugins &&\
-    git clone https://github.com/instrumenta/helm-kubeval /tmp/helm-kubeval &&\
-    yq ".version = \"${HELM_KUBEVAL_VER}\"" -i /tmp/helm-kubeval/plugin.yaml &&\
-    sed -i 's/v${version}/${version}/g' /tmp/helm-kubeval/scripts/install.sh
-RUN chown -R circleci:circleci /home/circleci/.local/share/helm/plugins /tmp/helm-kubeval
+RUN mkdir -p /home/circleci/.cache/helm/plugins/kubeval /home/circleci/.local/share/helm/plugins &&\
+    git clone https://github.com/instrumenta/helm-kubeval /home/circleci/.cache/helm/plugins/kubeval &&\
+    yq ".version = \"${HELM_KUBEVAL_VER}\"" -i /home/circleci/.cache/helm/plugins/kubeval/plugin.yaml &&\
+    sed -i 's/v${version}/${version}/g' /home/circleci/.cache/helm/plugins/kubeval/scripts/install.sh
+RUN chown -R circleci:circleci /home/circleci/.local/share/helm/plugins /home/circleci/.cache/helm/plugins
 USER circleci
-RUN helm plugin install https://github.com/databus23/helm-diff
-RUN helm plugin install /tmp/helm-kubeval &&\
-    rm -rf /tmp/helm-kubeval
+RUN helm plugin install https://github.com/databus23/helm-diff &&\
+    helm plugin install /home/circleci/.cache/helm/plugins/kubeval &&\
+    helm plugin list
