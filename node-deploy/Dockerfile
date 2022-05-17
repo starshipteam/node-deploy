@@ -11,7 +11,7 @@ RUN wget -q -O /home/circleci/.local/bin/runIfChanged https://github.com/sgeisba
 RUN apt-get update && \
     apt-get -y install openssh-client make
 RUN apt-get -y install python3-pip &&\
-    apt-get -y install groff &&\
+    apt-get -y install groff git &&\
     pip3 install awscli
 RUN apt-get -y install git-crypt
 RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
@@ -19,4 +19,16 @@ RUN mkdir -p /home/circleci/.local/bin/ && \
     curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeval && \
     chmod a+x /home/circleci/.local/bin/kubeval  
 RUN npm install -g zx
+RUN wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 &&\
+    chmod a+x /usr/local/bin/yq
+## Patching outdated kubeval Helm plugin on the fly
+ENV HELM_KUBEVAL_VER=v0.16.1
+RUN mkdir -p /tmp/helm-kubeval /home/circleci/.local/share/helm/plugins &&\
+    git clone https://github.com/instrumenta/helm-kubeval /tmp/helm-kubeval &&\
+    yq ".version = \"${HELM_KUBEVAL_VER}\"" -i /tmp/helm-kubeval/plugin.yaml &&\
+    sed -i 's/v${version}/${version}/g' /tmp/helm-kubeval/scripts/install.sh
+RUN chown -R circleci:circleci /home/circleci/.local/share/helm/plugins /tmp/helm-kubeval
 USER circleci
+RUN helm plugin install https://github.com/databus23/helm-diff
+RUN helm plugin install /tmp/helm-kubeval &&\
+    rm -rf /tmp/helm-kubeval
