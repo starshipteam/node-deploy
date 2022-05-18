@@ -30,5 +30,4 @@ RUN mkdir -p /home/circleci/.cache/helm/plugins/kubeval /home/circleci/.local/sh
 RUN chown -R circleci:circleci /home/circleci/.local/share/helm/plugins /home/circleci/.cache/helm/plugins
 USER circleci
 RUN helm plugin install https://github.com/databus23/helm-diff &&\
-    helm plugin install /home/circleci/.cache/helm/plugins/kubeval &&\
-    helm plugin list
+    helm plugin install /home/circleci/.cache/helm/plugins/kubeval
