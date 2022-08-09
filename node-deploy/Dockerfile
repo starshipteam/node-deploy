@@ -1,4 +1,4 @@
-FROM cimg/node:16.10.0
+FROM cimg/node:16.16
 # Install required system packages and dependencies
 USER root
 RUN mkdir -p /home/circleci/.local/bin/ && \
