@@ -89,11 +89,15 @@ workflows:
   build_and_push:
     jobs:
       - node-deploy-image:
+          context:
+            - dockerhub-secrets
           filters:
             branches:
               only:
                 - develop
       - golang-deploy-image:
+          context:
+            - dockerhub-secrets
           filters:
             branches:
               only:
