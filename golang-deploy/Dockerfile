@@ -10,4 +10,4 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 USER circleci
 
-RUN curl -o- -L https://slss.io/install | VERSION=2.66.1 bash
+RUN curl -o- -L https://slss.io/install | VERSION=3.27.0 bash
