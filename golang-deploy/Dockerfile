@@ -18,3 +18,11 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 USER circleci
 
 RUN curl -o- -L https://slss.io/install | VERSION=3.27.0 bash
+
+USER root
+
+# somehow circle-ci does not pick up the PATH var from ~/.bashrc where the serverless-installer 
+# added its bin-folder. so this is a quick-fix, for now
+RUN ln -s /home/circleci/.serverless/bin/serverless /usr/local/bin/serverless
+
+USER circleci
