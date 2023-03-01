@@ -7,95 +7,123 @@ commands:
         type: string
       image-url:
         type: string
+      version-suffix:
+        type: string
     steps:
       - run:
           name: push << parameters.image-url >>
           command: |
             docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
-            docker tag << parameters.image-url >> << parameters.image-url >>:$(cat ./<< parameters.image-name >>/version)
-            docker push << parameters.image-url >>:$(cat ./<< parameters.image-name >>/version)
+            docker tag << parameters.image-url >> << parameters.image-url >>:$(cat ./<< parameters.image-name >>/version)<<parameters.version-suffix>>
+            docker push << parameters.image-url >>:$(cat ./<< parameters.image-name >>/version)<<parameters.version-suffix>>
             docker push << parameters.image-url >>
 
 jobs:
-  node-build-image:
+  build-image:
     working_directory: ~/project
     docker:
       - image: circleci/buildpack-deps:stable
+    parameters:
+      image: 
+        type: string
 
     steps:
       - checkout
       - setup_remote_docker
       - run:
           name: build docker-image
-          command: docker build -t starshipteam/node-deploy-test ./node-deploy
+          command: docker build -t starshipteam/<<parameters.image>>-test ./<<parameters.image>>
 
-  node-deploy-image:
+  deploy-image:
     working_directory: ~/project
     docker:
       - image: circleci/buildpack-deps:stable
+    parameters:
+      image: 
+        type: string
+      version-suffix:
+        type: string
+        default: ''
 
     steps:
       - checkout
       - setup_remote_docker
       - run:
           name: build docker-image
-          command: docker build -t starshipteam/node-deploy ./node-deploy
+          command: docker build -t starshipteam/<<parameters.image>> ./<<parameters.image>>
       - push-image:
-          image-name: node-deploy
-          image-url: starshipteam/node-deploy
-
-  golang-build-image:
-    working_directory: ~/project
-    docker:
-      - image: circleci/buildpack-deps:stable
-
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: build docker-image
-          command: docker build -t starshipteam/golang-deploy-test ./golang-deploy
-
-  golang-deploy-image:
-    working_directory: ~/project
-    docker:
-      - image: circleci/buildpack-deps:stable
-
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: build docker-image
-          command: docker build -t starshipteam/golang-deploy ./golang-deploy
-      - push-image:
-          image-name: golang-deploy
-          image-url: starshipteam/golang-deploy
+          image-name: <<parameters.image>>
+          image-url: starshipteam/<<parameters.image>>
+          version-suffix: <<parameters.version-suffix>>
 
 workflows:
   build:
     jobs:
-      - node-build-image:
+      - build-image:
+          name: node-build-image
+          image: node-deploy
           filters:
             branches:
               only:
                 - /^feature\/.*/
                 - /^hotfix\/.*/
-      - golang-build-image:
+      - build-image:
+          name: golang-build-image
+          image: golang-deploy
           filters:
             branches:
               only:
                 - /^feature\/.*/
                 - /^hotfix\/.*/
+      - should-deploy-node-alpha-image:
+          type: approval
+          requires:
+            - node-build-image
+      - deploy-image:
+          name: node-deploy-alpha-image
+          context:
+            - dockerhub-secrets
+          image: node-deploy
+          version-suffix: -alpha
+          requires:
+            - should-deploy-node-alpha-image
+          filters:
+            branches:
+              only:
+                - /^feature\/.*/
+                - /^hotfix\/.*/
+      - should-deploy-golang-alpha-image:
+          type: approval
+          requires:
+            - golang-build-image
+      - deploy-image:
+          name: golang-deploy-alpha-image
+          context:
+            - dockerhub-secrets
+          image: golang-deploy
+          version-suffix: -alpha
+          requires:
+            - should-deploy-golang-alpha-image
+          filters:
+            branches:
+              only:
+                - /^feature\/.*/
+                - /^hotfix\/.*/
+
   build_and_push:
     jobs:
-      - node-deploy-image:
+      - deploy-image:
+          name: node-deploy-image
+          image: node-deploy
           context:
             - dockerhub-secrets
           filters:
             branches:
               only:
                 - develop
-      - golang-deploy-image:
+      - deploy-image:
+          name: golang-deploy-image
+          image: golang-deploy
           context:
             - dockerhub-secrets
           filters:
