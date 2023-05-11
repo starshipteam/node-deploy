@@ -31,3 +31,4 @@ RUN chown -R circleci:circleci /home/circleci
 USER circleci
 RUN helm plugin install https://github.com/databus23/helm-diff &&\
     helm plugin install /home/circleci/.cache/helm/plugins/kubeval
+RUN cd /home/circleci && npm link yaml
