@@ -18,7 +18,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-he
 RUN mkdir -p /home/circleci/.local/bin/ && \
     curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeval && \
     chmod a+x /home/circleci/.local/bin/kubeval  
-RUN npm install -g zx
+RUN npm install -g zx yaml
 RUN wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 &&\
     chmod a+x /usr/local/bin/yq
 ## Patching outdated kubeval Helm plugin on the fly
