@@ -13,6 +13,7 @@ RUN apt-get update && \
 RUN apt-get -y install python3-pip &&\
     apt-get -y install groff git &&\
     pip3 install awscli
+RUN apt-get -y install silversearcher-ag
 RUN apt-get -y install git-crypt
 RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 RUN mkdir -p /home/circleci/.local/bin/ && \
