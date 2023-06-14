@@ -27,7 +27,8 @@ ENV HELM_KUBEVAL_VER=v0.16.1
 RUN mkdir -p /home/circleci/.cache/helm/plugins/kubeval /home/circleci/.local/share/helm/plugins &&\
     git clone https://github.com/instrumenta/helm-kubeval /home/circleci/.cache/helm/plugins/kubeval &&\
     yq ".version = \"${HELM_KUBEVAL_VER}\"" -i /home/circleci/.cache/helm/plugins/kubeval/plugin.yaml &&\
-    sed -i 's/v${version}/${version}/g' /home/circleci/.cache/helm/plugins/kubeval/scripts/install.sh
+    sed -i 's/v${version}/${version}/g' /home/circleci/.cache/helm/plugins/kubeval/scripts/install.sh &&\
+    sed -i 's/--version|//g' /home/circleci/.cache/helm/plugins/kubeval/scripts/run.sh
 RUN chown -R circleci:circleci /home/circleci
 USER circleci
 RUN helm plugin install https://github.com/databus23/helm-diff &&\
