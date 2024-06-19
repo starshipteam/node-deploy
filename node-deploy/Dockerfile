@@ -17,19 +17,10 @@ RUN apt-get -y install silversearcher-ag
 RUN apt-get -y install git-crypt
 RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 RUN mkdir -p /home/circleci/.local/bin/ && \
-    curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeval && \
-    chmod a+x /home/circleci/.local/bin/kubeval  
+    curl -L https://github.com/yannh/kubeconform/releases/download/v0.6.6/kubeconform-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeconform && \
+    chmod a+x /home/circleci/.local/bin/kubeconform
 RUN npm install -g zx yaml
-RUN wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 &&\
-    chmod a+x /usr/local/bin/yq
-## Patching outdated kubeval Helm plugin on the fly
-ENV HELM_KUBEVAL_VER=v0.16.1
-RUN mkdir -p /home/circleci/.cache/helm/plugins/kubeval /home/circleci/.local/share/helm/plugins &&\
-    git clone https://github.com/instrumenta/helm-kubeval /home/circleci/.cache/helm/plugins/kubeval &&\
-    yq ".version = \"${HELM_KUBEVAL_VER}\"" -i /home/circleci/.cache/helm/plugins/kubeval/plugin.yaml &&\
-    sed -i 's/v${version}/${version}/g' /home/circleci/.cache/helm/plugins/kubeval/scripts/install.sh
-RUN chown -R circleci:circleci /home/circleci
+RUN cd /home/circleci && npm link yaml
 USER circleci
 RUN helm plugin install https://github.com/databus23/helm-diff &&\
-    helm plugin install /home/circleci/.cache/helm/plugins/kubeval
-RUN cd /home/circleci && npm link yaml
+    helm plugin install https://github.com/melmorabity/helm-kubeconform --version 0.6.6.1
