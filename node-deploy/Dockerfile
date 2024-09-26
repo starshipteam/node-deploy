@@ -15,7 +15,7 @@ RUN apt-get -y install python3-pip &&\
     pip3 install awscli
 RUN apt-get -y install silversearcher-ag
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&\
-    dpkg -i google-chrome-stable_current_amd64.deb
+    apt install google-chrome-stable_current_amd64.deb
 RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 RUN mkdir -p /home/circleci/.local/bin/ && \
     curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeval && \
