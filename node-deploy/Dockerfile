@@ -14,7 +14,8 @@ RUN apt-get -y install python3-pip &&\
     apt-get -y install groff git &&\
     pip3 install awscli
 RUN apt-get -y install silversearcher-ag
-RUN apt-get -y install git-crypt
+RUN curl -o /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&\
+    apt install /tmp/google-chrome-stable_current_amd64.deb
 RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 RUN mkdir -p /home/circleci/.local/bin/ && \
     curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar -C /home/circleci/.local/bin -xzf - kubeval && \
@@ -32,4 +33,4 @@ RUN chown -R circleci:circleci /home/circleci
 USER circleci
 RUN helm plugin install https://github.com/databus23/helm-diff &&\
     helm plugin install /home/circleci/.cache/helm/plugins/kubeval
-RUN cd /home/circleci && npm link yaml
+RUN cd /home/circleci && sudo npm link yaml
