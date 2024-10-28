@@ -1,4 +1,4 @@
-FROM cimg/go:1.21
+FROM cimg/go:1.23
 ARG DOCKERIZE_VERSION="v0.6.1"
 
 USER root
