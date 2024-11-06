@@ -1,4 +1,4 @@
-FROM cimg/go:1.23
+FROM cimg/go:1.23-node
 ARG DOCKERIZE_VERSION="v0.6.1"
 
 USER root
@@ -8,8 +8,7 @@ RUN apt-get update && \
         make \
         sshpass \
         awscli \
-        tree \
-        nodejs npm
+        tree
 
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
